@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>十一学校图书馆导览</title>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <link rel="stylesheet" href="https://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+        <link rel="stylesheet" href="https://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+        <script type="text/javascript" src="https://g.alicdn.com/sj/lib/zepto/zepto.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="https://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="pinchzoom.js"></script>
+        <script type="text/javascript" src="floorconfig.js"></script>
+        <style>*{touch-action:pan-y;}</style>
+    </head>
+    <body>
+        <div class="page-group">
+            <div class="page">
+                <header class="bar bar-nav">
+                    <h1 class="title">十一学校图书馆导览</h1>
+                </header>
+                <div class="content">
+                    <h3 class="text-center">图书分布</h3>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="list-block">
+                                <ul>
+                                    <li>
+                                        <a href="floor.html?floor=2" class="item-link item-content">
+                                            <div class="item-media">
+                                                <i class="icon icon-f7"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">二层</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="floor.html?floor=3" class="item-link item-content">
+                                            <div class="item-media">
+                                                <i class="icon icon-f7"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">三层</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="list-block">
+                                <ul>
+                                    <li>
+                                        <a href="https://support.qq.com/product/101050" class="item-link item-content" external target="_blank">
+                                            <div class="item-media">
+                                                <i class="icon icon-f7"></i>
+                                            </div>
+                                            <div class="item-inner">
+                                                <div class="item-title">问题反馈</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <p><footer class="text-center">由寰桐阁科技联盟强力驱动</footer></p>
+                </div>
+            </div>
+        </div>
+        <script>
+            var floorid = 0;
+            var locationid = 0;
+            function generatelist(a,b){
+                return '<li class="item-content">\
+                            <div class="item-inner">\
+                                <div class="item-title">'+a+'</div>\
+                                <div class="item-after">'+b+'</div>\
+                            </div>\
+                        </li>';
+            }
+            $(document).on("pageInit", function(e, pageId, $page) {
+                if(pageId == "floorpage") {
+                    var params = SharedResources.geturlparam();
+                    floorid = params.floor;
+                    $("#floortitle").text(SharedResources.floortranslate(floorid));
+                    $("#zoom-area").attr("src", SharedResources.getresourcebyfloor(floorid)["full"]);
+                    $("a.detailbtn").each(function(i){
+                        $(this).attr("href","detail.html?floor="+floorid+"&location="+SharedResources.locationtranslate($(this).text()));
+                    });
+                    new RTP.PinchZoom($("div.pinch-zoom"), {});
+                }
+                else if(pageId == "detailpage") {
+                    var params = SharedResources.geturlparam();
+                    floorid = params.floor;
+                    locationid = params.location;
+                    $("#detailtitle").text(SharedResources.floortranslate(floorid)+" "+SharedResources.locationtranslate(locationid));
+                    $("#locationimg").attr("src",SharedResources.getresourcebyfloor(floorid)[locationid][0]);
+                    //$("#bookimg").attr("src",SharedResources.getresourcebyfloor(floorid)[locationid][1]);
+                    let currbooks = SharedResources.getresourcebyfloor(floorid)[locationid][2];
+                    $("#bookdetail").html("");
+                    currbooks.forEach(v=>{
+                        $("#bookdetail").append(generatelist(v[0],v[1]));
+                    });
+                }
+            });
+            $.init();
+        </script>
+    </body>
+</html>
